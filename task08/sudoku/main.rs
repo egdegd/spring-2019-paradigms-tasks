@@ -13,7 +13,10 @@ mod field;
 // Чтобы не писать `field::Cell:Empty`, можно "заимпортировать" нужные вещи из модуля.
 use field::Cell::*;
 use field::{parse_field, Field, N};
-
+use std::sync::mpsc::channel;
+use std::sync::mpsc::Sender;
+use threadpool::ThreadPool;
+extern crate threadpool;
 /// Эта функция выполняет один шаг перебора в поисках решения головоломки.
 /// Она перебирает значение какой-нибудь пустой клетки на поле всеми непротиворечивыми способами.
 /// Что делать после фиксации значения, задаётся параметрами функции.
@@ -170,9 +173,37 @@ fn find_solution(f: &mut Field) -> Option<Field> {
 /// Перебирает все возможные решения головоломки, заданной параметром `f`, в несколько потоков.
 /// Если хотя бы одно решение `s` существует, возвращает `Some(s)`,
 /// в противном случае возвращает `None`.
+
+fn spawn_tasks(f: &mut Field, pool: &ThreadPool, sender: &Sender<Option<Field>>, depth: i32) {
+    if depth > 0 {
+        try_extend_field(
+            f,
+            |f| {
+                sender.send(Some(f.clone())).unwrap_or(());
+            },
+            |f| {
+                spawn_tasks(f, pool, sender, depth - 1);
+                None
+            },
+        );
+    } else {
+        let sender = sender.clone();
+        let mut f = f.clone();
+        pool.execute(move || {
+            sender.send(find_solution(&mut f)).unwrap_or(());
+        });
+    }
+}
+
 fn find_solution_parallel(mut f: Field) -> Option<Field> {
-    // TODO: вам требуется изменить эту функцию.
-    find_solution(&mut f)
+    let (tx, rx) = channel();
+    let n_workers = 8;
+    let pool = ThreadPool::new(n_workers);
+    const SPAWN_DEPTH: i32 = 2;
+    spawn_tasks(&mut f, &pool, &tx, SPAWN_DEPTH);
+    let mut it = rx.into_iter();
+    std::mem::drop(tx);
+    it.find_map(|x| x)
 }
 
 /// Юнит-тест, проверяющий, что `find_solution()` находит лексикографически минимальное решение на пустом поле.
