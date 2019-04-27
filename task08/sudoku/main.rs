@@ -17,6 +17,7 @@ use std::sync::mpsc::channel;
 use std::sync::mpsc::Sender;
 use threadpool::ThreadPool;
 extern crate threadpool;
+
 /// Эта функция выполняет один шаг перебора в поисках решения головоломки.
 /// Она перебирает значение какой-нибудь пустой клетки на поле всеми непротиворечивыми способами.
 /// Что делать после фиксации значения, задаётся параметрами функции.
@@ -173,7 +174,6 @@ fn find_solution(f: &mut Field) -> Option<Field> {
 /// Перебирает все возможные решения головоломки, заданной параметром `f`, в несколько потоков.
 /// Если хотя бы одно решение `s` существует, возвращает `Some(s)`,
 /// в противном случае возвращает `None`.
-
 fn spawn_tasks(f: &mut Field, pool: &ThreadPool, sender: &Sender<Option<Field>>, depth: i32) {
     if depth > 0 {
         try_extend_field(
