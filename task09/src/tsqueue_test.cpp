@@ -2,7 +2,7 @@
 #include "tsqueue.h"
 #include "doctest.h"
 
-const int ELEMENTS_PER_THREAD = 1000 * 1000;
+const int ELEMENTS_PER_THREAD = 100 * 1000;
 const int REPEATS = 3;
 
 TEST_CASE("ThreadsafeQueue works like Queue in a single thread") {
@@ -32,7 +32,7 @@ TEST_CASE("ThreadsafeQueue multithreaded ping-pong") {
     // 0. Создаются два потока: `pinger` и `ponger`
     //    (независимые от основного потока теста).
     //    После этого `PING_PONGS` раз должно произойти следующее:
-    // 1. Поток `pinger` отправляет `qs[0]` потоку `ponger`
+    // 1. Поток `pinger` отправляет через `qs[0]` потоку `ponger`
     //    указатель на локальную переменную типа `int`.
     // 2. Поток `ponger` увеличивает полученную переменную на
     //    единицу и отправляет результат обратно через `qs[1]`.
