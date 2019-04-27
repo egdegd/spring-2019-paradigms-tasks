@@ -15,8 +15,8 @@ void threadsafe_queue_destroy(ThreadsafeQueue *q) {
 void threadsafe_queue_push(ThreadsafeQueue *q, void *data) {
     pthread_mutex_lock(&q->mutex);
     queue_push(&q->q, data);
-    pthread_mutex_unlock(&q->mutex);
     pthread_cond_signal(&q->condition_not_empty);
+    pthread_mutex_unlock(&q->mutex);
 }
 
 void *threadsafe_queue_wait_and_pop(ThreadsafeQueue *q) {
