@@ -201,9 +201,8 @@ fn find_solution_parallel(mut f: Field) -> Option<Field> {
     let pool = ThreadPool::new(n_workers);
     const SPAWN_DEPTH: i32 = 2;
     spawn_tasks(&mut f, &pool, &tx, SPAWN_DEPTH);
-    let mut it = rx.into_iter();
     std::mem::drop(tx);
-    it.find_map(|x| x)
+    rx.into_iter().find_map(|x| x)
 }
 
 /// Юнит-тест, проверяющий, что `find_solution()` находит лексикографически минимальное решение на пустом поле.
