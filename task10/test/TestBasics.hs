@@ -27,13 +27,13 @@ testsBasics = testGroup "Unit tests for Basics tasks"
         drop' 1 [1,2,3] @?= [2,3]
 
     , testCase "drop' drops 2 element from infinite list" $
-        drop' 2 [1..] @?= [3..]
+        head' (drop' 2 [1..]) @?= 3
 
     , testCase "filter' selects only even numbers from 0 to 10" $
         filter' even [0..10] @?= [0,2..10]
 
     , testCase "filter' selects only even numbers from infinite list" $
-        filter' even [1..] @?= [2,4..]
+        head' (filter' even [1..]) @?= 2
 
     , testCase "foldl'' can be used for finding sum of elements" $
         foldl'' (+) 0 [1,2,3] @?= 6
@@ -42,7 +42,7 @@ testsBasics = testGroup "Unit tests for Basics tasks"
         concat' [1,2,3] [4,5,6] @?= [1..6]
 
     , testCase "concat' works on infinite lists" $
-        concat' [1,2,3] [4..] @?= [1..]
+        head' (concat' [1,2,3] [4..]) @?= 1
 
     , testCase "quickSort actualy sorts the list" $
         quickSort' [5,2,3,4,1] @?= [1..5]
