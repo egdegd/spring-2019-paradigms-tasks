@@ -67,6 +67,9 @@ class ASTNode(metaclass=abc.ABCMeta):
         Запускает вычисление текущего узла синтаксического дерева
         в заданной области видимости и возвращает результат вычисления.
         """
+    @abc.abstractmethod
+    def accept(self, visitor):
+        pass
 
 
 class Number(ASTNode):
