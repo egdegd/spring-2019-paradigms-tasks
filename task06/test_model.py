@@ -23,7 +23,7 @@ def test_scope_parent():
 def test_scope_error():
     a, b, c = object(), object(), object()
     parent = Scope()
-    parent['foo'] = abra    
+    parent['foo'] = a
     parent['bar'] = b
     scope = Scope(parent)
     with pytest.raises(KeyError):
