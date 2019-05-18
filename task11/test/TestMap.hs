@@ -86,6 +86,10 @@ mapTests name (_ :: Proxy m) =
                 let map   = updateWithKey f 5 (fromList [(5,"a"), (3,"b")]) :: m Int String
                 in Map.lookup 5 map @?= Just "5:new a"
         ],
+        testCase "alter" $
+                let tr = fromList [(1, "a")] :: m Int String in
+                toAscList (alter (const (Just "b")) 1 tr) @?= [(1, "b")]
+        ,
         testGroup "Test member" [
             testCase "test member true" $
                 let map = (fromList [(5,"a"), (3,"b")]) :: m Int String in
